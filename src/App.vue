@@ -1,27 +1,39 @@
 <template>
 	<div id="app">
-		<div class="bluesky-avatar"><img :src="user.data.avatar"/></div>
-	<div v-if="user" class="bluesky-user">
-		<p><a :href="this.bskyurl">@{{ user.data.handle }}</a></p>
+		<div v-if="id === 'syui'" class="bluesky-avatar"><img :src="user.data.avatar"/></div>
+	<div v-if="id === 'syui'" class="bluesky-user">
 		<p>{{ user.data.did }}</p>
 	</div>
 	<form @submit.prevent="submit">
 		<input v-model="id" placeholder="id" value="id">
 		<input type="submit">
 	</form> 
-	<div v-if="record && record.data.records[0].uri !== uri" class="bluesky-record">
-		<li v-for="i in record.data.records">
-			<p><span class="name">{{ name }}</span></p>
-			<p><span class="text">{{ i.value.text }}</span></p>
-			<p><span class="time"><a :href="i.uri">{{ i.value.createdAt }}</a></span></p>
-		</li>
+	<p><a :href="this.bskyurl">{{ name }}</a></p>
+	<div v-if="avatar" class="bluesky-avatar"><img :src="avatar"/></div>
+<div v-if="record && record.data.records[0].uri !== uri" class="bluesky-record">
+	<li v-for="i in record.data.records">
+		<p><span class="name">{{ name }}</span></p>
+		<p><span class="text">{{ i.value.text }}</span></p>
+		<p><span class="time"><a :href="i.uri">{{ i.value.createdAt }}</a></span></p>
+	</li>
 	</div>
 	</div>
 </template>
 
 <script>
 import axios from 'axios'
-var default_id = "syui";
+const routes = [{ path: '/*', redirect: '/' }]
+var loc = window.location.pathname.split('/').slice(-1)[0];
+var hash = window.location.hash.split('/').slice(-1)[0];
+if (loc.length == 0||loc === "bsky"){
+	var default_id = "syui";
+} else {
+	var default_id = loc;
+}
+
+if (hash === "#github"){
+	var avatar = "https://github.com/" + default_id + ".png";
+}
 export default {
 	data () {
 		return {
@@ -30,7 +42,9 @@ export default {
 			id: default_id,
 			bskyurl: "https://bsky.app/profile/" + default_id + ".bsky.social",
 			user: null,
-			record: null
+			record: null,
+			appurl: loc,
+			avatar: avatar,
 		}
 	},
 	mounted () {
@@ -47,8 +61,11 @@ export default {
 				.get("https://bsky.social/xrpc/com.atproto.repo.listRecords?user=" + this.id + ".bsky.social&collection=app.bsky.feed.post")
 				.then(response => (this.record = response));
 				this.name = "@" + this.id + ".bsky.social";
+			this.bskyurl = "https://bsky.app/profile/" + this.id + ".bsky.social";
 				if (this.uri !== null){
 					this.uri = this.record.data.records[0].uri;
+				} else {
+					this.uri = null;
 				}
 		}
 	}

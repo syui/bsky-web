@@ -1,4 +1,5 @@
 module.exports = {
+	publicPath: "./",
 	configureWebpack: {
 		output: {
 			filename: '[name].js',

@@ -1,0 +1,16 @@
+{
+  "did": "did:plc:uqzpqmrjnptsxezjx4xuh2mn",
+  "handle": "syui.bsky.social",
+  "displayName": "syui",
+  "description": "https://syui.cf",
+  "avatar": "https://cdn.bsky.social/imgproxy/aSbqSRpqXSxkXBRpRODZUEquXcWOdaBXiwtPcMvmXZM/rs:fill:1000:1000:1:0/plain/bafkreid6kcc5pnn4b3ar7mj6vi3eiawhxgkcrw3edgbqeacyrlnlcoetea@jpeg",
+  "banner": "https://cdn.bsky.social/imgproxy/6lZ7i2rVRZ65h90a7caVfuHbUaw0_1g8lhAx9hBHcIQ/rs:fill:3000:1000:1:0/plain/bafkreif5z5mbbubxuck3kn4fx7guqeznnlm4ujw7pseozn73p3k6czj5xa@jpeg",
+  "creator": "did:plc:uqzpqmrjnptsxezjx4xuh2mn",
+  "indexedAt": "2023-02-24T13:43:39.662Z",
+  "viewer": {
+    "muted": false
+  },
+  "myState": {
+    "muted": false
+  }
+}
