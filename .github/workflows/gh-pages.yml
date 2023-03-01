@@ -1,0 +1,32 @@
+name: github pages
+
+on:
+  push:
+    branches:
+    - gh-pages
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 14
+        ref: main
+        submodules: true
+        fetch-depth: 0
+    - run: yarn install
+
+    - name: Build
+      env: 
+        TZ: "Asia/Tokyo"
+      run: |
+           yarn build
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        publish_branch: gh-pages
