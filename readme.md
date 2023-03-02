@@ -2,7 +2,7 @@
 
 user : https://bsky.syui.cf/syui
 
-avator : https://bsky.syui.cf/syui#github
+avatar : https://bsky.syui.cf/syui#github
 
 
 ```sh
