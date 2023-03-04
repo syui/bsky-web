@@ -82,7 +82,7 @@
 	<li v-for="i in record.data.records">
 		<p><span class="name">{{ name }}</span></p>
 		<p><span class="text">{{ i.value.text }}</span></p>
-		<p><span class="time"><a :href="i.uri">{{ i.value.createdAt }}</a></span></p>
+		<p><span class="time"><a :href="i.uri">{{ moment_origin(i.value.createdAt) }}</a></span></p>
 	</li>
 </div>
 </div>
@@ -123,7 +123,7 @@ export default {
 			signin_body: null,
 			login_body: null,
 			login_post: null,
-			time: moment.utc().format(),
+			time: moment.utc().toISOString(),
 			text: null,
 			did: null,
 			token: null,
@@ -146,7 +146,10 @@ export default {
 	},
 	methods: {
 		moment: function (date) {
-			return moment.unix(date).format('YYYY:MM:DDTHH:mm:ss:SSS')
+			return moment.unix(date).toISOString()
+		},
+		moment_origin: function (date) {
+			return moment.utc(date).format('DD/MM/YY HH:mm')
 		},
 		submit() {
 			axios
