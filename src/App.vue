@@ -229,6 +229,8 @@ export default {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
+
 div#app {
 	list-style: none;
 	margin: 100px;
@@ -240,12 +242,16 @@ span.time {
 	color: blue;
 }
 span.name {
+	font-family: 'DM Sans';
+	font-weight: 700;
 	background-color: #a3c3ff1a;
 	padding:10px;
 }
 span.text {
+    font-family: DM Sans;
+    font-weight: 400;
+    font-size: 19px;
 }
-
 .bluesky-record li {
 	border-bottom: solid 1px #ccc;
 }
@@ -258,7 +264,9 @@ span.text {
 	margin: 50px 100px 0 0;
 }
 a {
-	color: #3f89ff;
+	color: #00A4E1;
+	font-family: 'DM Sans';
+	font-weight: '800';
 }
 footer#footer {
 	text-align: center;
