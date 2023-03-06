@@ -1,9 +1,7 @@
 <template>
 	<div id="app">
-
 		<p><a :href="this.signin"><button class="">signin</button></a> <a :href="this.login"><button class="">login</button></a></p>
-
-		<div v-if="id === 'login'">
+		<div v-if="id === 'login.bsky.social'">
 			<form @submit.prevent="lsubmit">
 				<p><input v-model="handle" placeholder="user"></p>
 				<p><input v-model="password" placeholder="password"></p>
@@ -13,8 +11,18 @@
 
 		<div v-if="login_body !== null">
 			<p>{{ id = login_body.data.handle.split('.',1)[0] }}</p>
-			<p>{{	this.name = "@" + this.id + ".bsky.social" }}</p>
+			<p>{{	this.name = "@" + this.id }}</p>
 			<div class="bluesky-avatar" v-if="login_profile !== null">
+				<p>{{ login_profile.data.did }}</p>
+				<form @submit.prevent="updatehandle">
+					handle.update : <input v-model="domain" placeholder="example.com">
+					<input type="submit">
+				</form> 
+				<p><code>DNS txt : _atproto.{{ domain }}, did={{ login_profile.data.did }}.</code></p>
+				<p><code>{{ update_handle }}</code></p>
+				<div v-if="update_handle_check === true">
+					handle.update : {{ update_handle_check }}
+				</div>
 				<p>follows {{ login_profile.data.followsCount }} / followers {{ login_profile.data.followersCount }}</p>
 				<p><img :src="login_profile.data.avatar"/></p>
 		</div>
@@ -38,6 +46,7 @@
 	</div>
 
 		<div v-if="login_tl !== null">
+			<div v-if="login_tl.data">
 			<li v-for="i in login_tl.data.feed" class="bluesky-record">
 				<p class="tl-avatar"><img :src="i.post.author.avatar"/></p>
 			<p><span class="name">@{{ i.post.author.handle }}</span></p>
@@ -45,8 +54,9 @@
 			<p><span class="time"><a :href="i.post.uri">{{ i.post.record.createdAt }}</a></span></p>
 		</li>
 	</div>
+	</div>
 
-	<div v-if="id === 'signin'">
+	<div v-if="id === 'signin.bsky.social'">
 		<form @submit.prevent="ssubmit">
 			<p><input v-model="handle" placeholder="handle"></p>
 			<p><input v-model="password" placeholder="password"></p>
@@ -57,8 +67,8 @@
 		{{ signin_body }}
 	</div>
 
-	<div v-if="id === 'syui'" class="bluesky-avatar"><img :src="user.data.avatar"/></div>
-	<div v-if="id === 'syui'" class="bluesky-user"><p>{{ user.data.did }}</p></div>
+	<div v-if="id === 'syui.cf'" class="bluesky-avatar"><img :src="user.data.avatar"/></div>
+	<div v-if="id === 'syui.cf'" class="bluesky-user"><p>{{ user.data.did }}</p></div>
 
 	<div v-if="id !== 'login'">
 		<div v-if="id !== 'signin'">
@@ -73,19 +83,22 @@
 
 	<div v-if="id !== 'login'">
 		<div v-if="id !== 'signin'">
-			<p><a :href="this.bskyurl">{{ name }}</a></p>
+			<p><a :href="this.bskyurl">@{{ id }}</a></p>
 		</div>
 	</div>
 
 	<div v-if="avatar" class="bluesky-avatar"><img :src="avatar"/></div>
-<div v-if="record && record.data.records[0].uri !== uri" class="bluesky-record">
-	<li v-for="i in record.data.records">
-		<p><span class="name">{{ name }}</span></p>
-		<p><span class="text">{{ i.value.text }}</span></p>
-		<p><span class="time"><a :href="i.uri">{{ moment_origin(i.value.createdAt) }}</a></span></p>
-	</li>
-</div>
-</div>
+<div v-if="record" class="bluesky-did">
+	{{ record.data.records[0].uri.split('/',3)[2] }}
+	</div>
+	<div v-if="record && record.data.records[0].uri !== uri" class="bluesky-record">
+		<li v-for="i in record.data.records">
+			<p><span class="name">{{ name }}</span></p>
+			<p><span class="text">{{ i.value.text }}</span></p>
+			<p><span class="time"><a :href="i.uri">{{ moment_origin(i.value.createdAt) }}</a></span></p>
+		</li>
+		</div>
+		</div>
 </template>
 
 <script>
@@ -93,9 +106,12 @@ import axios from 'axios'
 import moment from 'moment';
 const routes = [{ path: '/*', redirect: '/' }]
 var loc = window.location.pathname.split('/').slice(-1)[0];
+if (loc.includes('.') === false) {
+	loc = loc + ".bsky.social";
+}
 var hash = window.location.hash.split('/').slice(-1)[0];
-if (loc.length == 0||loc === "bsky"){
-	var default_id = "syui";
+if (loc.length == 0||loc === ".bsky.social"){
+	var default_id = "syui.cf";
 } else {
 	var default_id = loc;
 }
@@ -109,7 +125,7 @@ export default {
 			uri: "did:plc:uqzpqmrjnptsxezjx4xuh2mn",
 			name: "@" + default_id + ".bsky.social",
 			id: default_id,
-			bskyurl: "https://bsky.app/profile/" + default_id + ".bsky.social",
+			bskyurl: "https://bsky.app/profile/" + default_id,
 			user: null,
 			record: null,
 			appurl: loc,
@@ -134,14 +150,18 @@ export default {
 			loc: window.location.pathname.split('/').slice(-1)[0],
 			login_profile: null,
 			login_tl: null,
+			domain: null,
+			update_handle: null,
+			update_handle_check: false,
+			error: {}
 		}
 	},
-	mounted () {
+	created () {
 		axios
 			.get("/json/syui.bsky.social.json")
 			.then(response => (this.user = response));
 			axios
-				.get("https://bsky.social/xrpc/com.atproto.repo.listRecords?user=" + this.id + ".bsky.social&collection=app.bsky.feed.post")
+				.get("https://bsky.social/xrpc/com.atproto.repo.listRecords?user=" + this.id + "&collection=app.bsky.feed.post")
 				.then(response => (this.record = response));
 	},
 	methods: {
@@ -152,11 +172,14 @@ export default {
 			return moment.utc(date).format('DD/MM/YY HH:mm')
 		},
 		submit() {
+			if (this.id.includes('.') === false) {
+				this.id = this.id + ".bsky.social";
+			}
 			axios
-				.get("https://bsky.social/xrpc/com.atproto.repo.listRecords?user=" + this.id + ".bsky.social&collection=app.bsky.feed.post")
+				.get("https://bsky.social/xrpc/com.atproto.repo.listRecords?user=" + this.id + "&collection=app.bsky.feed.post")
 				.then(response => (this.record = response));
-				this.name = "@" + this.id + ".bsky.social";
-				this.bskyurl = "https://bsky.app/profile/" + this.id + ".bsky.social";
+				this.name = "@" + this.id;
+				this.bskyurl = "https://bsky.app/profile/" + this.id;
 				if (this.uri !== null){
 					this.uri = this.record.data.records[0].uri;
 				} else {
@@ -176,7 +199,7 @@ export default {
 		lsubmit() {
 			axios
 				.post("https://bsky.social/xrpc/com.atproto.session.create", {
-					handle: this.handle + ".bsky.social",
+					handle: this.handle,
 					password: this.password,
 				})
 				.then(response => (this.login_body = response));
@@ -191,6 +214,26 @@ export default {
 				},
 				})
 				.then(response => (this.login_profile = response));
+		},
+		updatehandle() {
+			this.message = null;
+			this.json = {
+				handle: this.domain
+			};
+			this.token = "Bearer " + this.login_body.data.accessJwt;
+			axios
+				.post("https://bsky.social/xrpc/com.atproto.handle.update", this.json, {
+					headers: {
+					Authorization: this.token
+				},
+				})
+				.then(response => {
+					(this.update_handle = response.data)
+					this.update_handle_check = true;
+				})
+				.catch(error => {
+					(this.update_handle = error.response.data)
+				});
 		},
 		psubmit() {
 			this.json = {
@@ -213,7 +256,7 @@ export default {
 		},
 		timeline() {
 			axios
-				.get("https://bsky.social/xrpc/com.atproto.repo.listRecords?user=" + this.id + ".bsky.social&collection=app.bsky.feed.post")
+				.get("https://bsky.social/xrpc/com.atproto.repo.listRecords?user=" + this.id + "&collection=app.bsky.feed.post")
 				.then(response => (this.record = response));
 		},
 		tl() {
