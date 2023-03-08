@@ -34,7 +34,13 @@
 			<p><input v-model="text" placeholder="text"></p>
 			<button type="psubmit">post</button>
 		</form>
-		<div v-if="login_post !== null">
+		<input @change="selectedFile" type="file" name="file">
+		<button @click="upload" type="submit">upload</button>
+		<div v-if="cid">
+			<p>image : {{ cid }}</p>
+			<p>{{ media_post }}</p>
+		</div>
+			<div v-if="login_post !== null">
 			{{ login_post.data }}
 		</div>
 		<form @submit.prevent="profile">
@@ -104,7 +110,9 @@
 <script>
 import axios from 'axios'
 import moment from 'moment';
+import superagent from 'superagent';
 const routes = [{ path: '/*', redirect: '/' }]
+
 var loc = window.location.pathname.split('/').slice(-1)[0];
 if (loc.includes('.') === false) {
 	loc = loc + ".bsky.social";
@@ -153,9 +161,13 @@ export default {
 			domain: null,
 			update_handle: null,
 			update_handle_check: false,
-			error: {}
+			error: {},
+			cid: null,
+			text: "",
+			uploadFile: null,
 		}
 	},
+
 	created () {
 		axios
 			.get("/json/syui.bsky.social.json")
@@ -165,17 +177,61 @@ export default {
 				.then(response => (this.record = response));
 	},
 	methods: {
-		moment: function (date) {
-			return moment.unix(date).toISOString()
+		selectedFile(e) {
+			let files = e.target.files;
+			this.uploadFile = files[0];
 		},
-		moment_origin: function (date) {
-			return moment.utc(date).format('DD/MM/YY HH:mm')
-		},
-		submit() {
-			if (this.id.includes('.') === false) {
-				this.id = this.id + ".bsky.social";
-			}
-			axios
+		upload() {
+			const form = new FormData();
+			form.append('file', this.uploadFile);
+			this.token = "Bearer " + this.login_body.data.accessJwt;
+			superagent
+				.post("https://bsky.social/xrpc/com.atproto.blob.upload")
+				.set({'Authorization': this.token})
+				.set({'X-HTTP-Method-Override': 'PUT'})
+				.attach('file', this.uploadFile)
+				.then(response => {
+					this.cid = response.body.cid;
+					this.json = {
+						did: this.login_body.data.did,
+						collection: "app.bsky.feed.post",
+						record: {
+							text: this.text,
+							createdAt: this.time,
+							embed: {
+								$type: "app.bsky.feed.post",
+								images: [
+									{
+										image: {
+											cid: this.cid,
+											mimeType: "image/png"
+										},
+										alt: ""
+									}
+								]
+							}
+						}
+					};
+					axios
+						.post("https://bsky.social/xrpc/com.atproto.repo.createRecord", this.json, {
+							headers: {
+							Authorization: this.token
+						},
+						})
+						.then(response => (this.media_post = response.data))
+						.catch(error => (this.media_post = error.response.data));
+				})},
+				moment: function (date) {
+					return moment.unix(date).toISOString()
+				},
+				moment_origin: function (date) {
+					return moment.utc(date).format('DD/MM/YY HH:mm')
+				},
+				submit() {
+					if (this.id.includes('.') === false) {
+						this.id = this.id + ".bsky.social";
+					}
+					axios
 				.get("https://bsky.social/xrpc/com.atproto.repo.listRecords?user=" + this.id + "&collection=app.bsky.feed.post")
 				.then(response => (this.record = response));
 				this.name = "@" + this.id;
