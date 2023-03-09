@@ -130,7 +130,7 @@ if (loc.length == 0||loc === ".bsky.social"){
 }
 
 if (hash === "#github"){
-	var avatar = "https://github.com/" + default_id + ".png";
+	var avatar = "https://github.com/" + window.location.pathname.split('/').slice(-1)[0] + ".png";
 }
 export default {
 	data () {
