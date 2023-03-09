@@ -3,7 +3,7 @@
 		<p><a :href="this.signin"><button class="">signin</button></a> <a :href="this.login"><button class="">login</button></a></p>
 		<div v-if="id === 'login.bsky.social'">
 			<form @submit.prevent="lsubmit">
-				<p><input v-model="handle" placeholder="user"></p>
+				<p><input v-model="handle" placeholder="user.bsky.social"></p>
 				<p><input v-model="password" placeholder="password"></p>
 				<button type="lsubmit">send</button>
 			</form>
@@ -34,8 +34,13 @@
 			<p><input v-model="text" placeholder="text"></p>
 			<button type="psubmit">post</button>
 		</form>
-		<input @change="selectedFile" type="file" name="file">
+		<!-- test : img post
+		<input @change="selectedFile" type="file" name="file" accept="image/png, image/jpeg">
 		<button @click="upload" type="submit">upload</button>
+		{{ file }}
+		{{ files }}
+		{{ json }}
+		-->
 		<div v-if="cid">
 			<p>image : {{ cid }}</p>
 			<p>{{ media_post }}</p>
@@ -165,6 +170,9 @@ export default {
 			cid: null,
 			text: "",
 			uploadFile: null,
+			media_post: null,
+			file: null,
+			files: null,
 		}
 	},
 
@@ -178,18 +186,18 @@ export default {
 	},
 	methods: {
 		selectedFile(e) {
-			let files = e.target.files;
-			this.uploadFile = files[0];
+			let file = e.target.files[0];
+			const files = new Blob([file], { type: 'image/png' });
+			e.preventDefault();
+			this.file = file;
+			this.files = files;
 		},
 		upload() {
-			const form = new FormData();
-			form.append('file', this.uploadFile);
 			this.token = "Bearer " + this.login_body.data.accessJwt;
 			superagent
 				.post("https://bsky.social/xrpc/com.atproto.blob.upload")
 				.set({'Authorization': this.token})
-				.set({'X-HTTP-Method-Override': 'PUT'})
-				.attach('file', this.uploadFile)
+				.attach('file', this.files)
 				.then(response => {
 					this.cid = response.body.cid;
 					this.json = {
