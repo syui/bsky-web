@@ -79,7 +79,7 @@
 	</div>
 
 	<div v-if="id === 'syui.cf'" class="bluesky-avatar"><img :src="user.data.avatar"/></div>
-	<div v-if="id === 'syui.cf'" class="bluesky-user"><p>{{ user.data.did }}</p></div>
+<div v-if="id === 'syui.cf'" class="bluesky-user"><p><code><a href="/jack#github">bsky.syui.cf/jack#github</a></code></p></div>
 
 	<div v-if="id !== 'login'">
 		<div v-if="id !== 'signin'">
@@ -386,6 +386,12 @@ span.text {
 }
 p.tl-avatar img {
     width: 20px;
+}
+code {
+    font-size: 15px;
+				/*color: #3f89ff;*/
+    padding: 5px 5px 5px 5px;
+    background-color: #d4deee2b;
 }
 @media screen and (max-width:1000px) { 
 	div#app{list-style:none;margin:0px}.bluesky-avatar img{width:55px}span.time{color:#00f}span.name{background-color:rgba(163,195,255,.10196078431372549);padding:10px}.bluesky-record li{border-bottom:1px solid #ccc}.bluesky-record p{padding:0 20px 0}.bluesky-record{border:1px solid #ccc;border-radius:10px;margin:0px 0px 0 0}a{color:#3f89ff}footer#footer{text-align:center}
