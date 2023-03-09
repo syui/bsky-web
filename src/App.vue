@@ -79,7 +79,7 @@
 	</div>
 
 	<div v-if="id === 'syui.cf'" class="bluesky-avatar"><img :src="user.data.avatar"/></div>
-<div v-if="id === 'syui.cf'" class="bluesky-user"><p><code><a href="/jack#github">bsky.syui.cf/jack#github</a></code></p></div>
+<div v-if="id === 'syui.cf'" class="bluesky-user"><p><code><a href="/jack">/jack</a></code></p></div>
 
 	<div v-if="id !== 'login'">
 		<div v-if="id !== 'signin'">
