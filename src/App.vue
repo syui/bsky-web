@@ -10,7 +10,7 @@
 		</div>
 
 		<div v-if="login_body !== null">
-			<p>{{ id = login_body.data.handle.split('.',1)[0] }}</p>
+			<p>{{ id = login_body.data.handle }}</p>
 			<p>{{	this.name = "@" + this.id }}</p>
 			<div class="bluesky-avatar" v-if="login_profile !== null">
 				<p>{{ login_profile.data.did }}</p>
@@ -18,7 +18,7 @@
 					handle.update : <input v-model="domain" placeholder="example.com">
 					<input type="submit">
 				</form> 
-				<p><code>DNS txt : _atproto.{{ domain }}, did={{ login_profile.data.did }}.</code></p>
+				<p><code>DNS txt : _atproto.{{ domain }}, did={{ login_profile.data.did }}</code></p>
 				<p><code>{{ update_handle }}</code></p>
 				<div v-if="update_handle_check === true">
 					handle.update : {{ update_handle_check }}
