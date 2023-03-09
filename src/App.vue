@@ -78,12 +78,12 @@
 		{{ signin_body }}
 	</div>
 
-	<div v-if="id === 'syui.cf'" class="bluesky-avatar"><img :src="user.data.avatar"/></div>
+	<div v-if="id === 'syui.cf'" class="bluesky-avatar"><img :src="syui_icon"/></div>
 <div v-if="id === 'syui.cf'" class="bluesky-user"><p><code><a href="/jack">/jack</a></code></p></div>
 
-	<div v-if="id !== 'login'">
-		<div v-if="id !== 'signin'">
-			<div v-if="loc !== 'login'">
+	<div v-if="id !== 'login.bsky.social'">
+		<div v-if="id !== 'signin.bsky.social'">
+			<div v-if="loc !== 'login.bsky.social'">
 				<form @submit.prevent="submit">
 					<input v-model="id" placeholder="id" value="id">
 					<input type="submit">
@@ -92,15 +92,15 @@
 		</div>
 	</div>
 
-	<div v-if="id !== 'login'">
-		<div v-if="id !== 'signin'">
+	<div v-if="id !== 'login.bsky.social'">
+		<div v-if="id !== 'signin.bsky.social'">
 			<p><a :href="this.bskyurl">@{{ id }}</a></p>
 		</div>
 	</div>
 
-	<div v-if="avatar" class="bluesky-avatar"><img :src="avatar"/></div>
-<div v-if="record" class="bluesky-did">
-	{{ record.data.records[0].uri.split('/',3)[2] }}
+		<div v-if="avatar" class="bluesky-avatar"><img :src="avatar"/></div>
+	<div v-if="record" class="bluesky-did">
+		{{ record.data.records[0].uri.split('/',3)[2] }}
 	</div>
 	<div v-if="record && record.data.records[0].uri !== uri" class="bluesky-record">
 		<li v-for="i in record.data.records">
@@ -108,8 +108,8 @@
 			<p><span class="text">{{ i.value.text }}</span></p>
 			<p><span class="time"><a :href="i.uri">{{ moment_origin(i.value.createdAt) }}</a></span></p>
 		</li>
-		</div>
-		</div>
+	</div>
+</div>
 </template>
 
 <script>
@@ -135,6 +135,7 @@ if (hash === "#github"){
 export default {
 	data () {
 		return {
+			syui_icon: "/syui.png",
 			uri: "did:plc:uqzpqmrjnptsxezjx4xuh2mn",
 			name: "@" + default_id + ".bsky.social",
 			id: default_id,
@@ -175,14 +176,14 @@ export default {
 			files: null,
 		}
 	},
-
 	created () {
-		axios
-			.get("/json/syui.bsky.social.json")
-			.then(response => (this.user = response));
-			axios
-				.get("https://bsky.social/xrpc/com.atproto.repo.listRecords?user=" + this.id + "&collection=app.bsky.feed.post")
-				.then(response => (this.record = response));
+		if (this.id !== 'login.bsky.social') {
+			if (this.id !== 'signin.bsky.social') { 
+				axios
+					.get("https://bsky.social/xrpc/com.atproto.repo.listRecords?user=" + this.id + "&collection=app.bsky.feed.post")
+					.then(response => (this.record = response));
+			}
+		}
 	},
 	methods: {
 		selectedFile(e) {
