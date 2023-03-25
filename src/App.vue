@@ -78,8 +78,8 @@
 		{{ signin_body }}
 	</div>
 
-	<div v-if="id === 'syui.cf'" class="bluesky-avatar"><img :src="syui_icon"/></div>
-<div v-if="id === 'syui.cf'" class="bluesky-user"><p><code><a href="/jack">/jack</a></code></p></div>
+	<div v-if="id === 'syui.bsky.social'" class="bluesky-avatar"><img :src="syui_icon"/></div>
+<div v-if="id === 'syui.bsky.social'" class="bluesky-user"><p><code><a href="/jack">/jack</a></code></p></div>
 
 	<div v-if="id !== 'login.bsky.social'">
 		<div v-if="id !== 'signin.bsky.social'">
@@ -124,7 +124,7 @@ if (loc.includes('.') === false) {
 }
 var hash = window.location.hash.split('/').slice(-1)[0];
 if (loc.length == 0||loc === ".bsky.social"){
-	var default_id = "syui.cf";
+	var default_id = "syui.bsky.social";
 } else {
 	var default_id = loc;
 }
