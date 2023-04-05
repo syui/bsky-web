@@ -23,6 +23,8 @@ jobs:
         TZ: "Asia/Tokyo"
       run: |
            yarn build
+           rm ./dist/CNAME
+           echo bskyw.syui.ai > ./dist/CNAME
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3

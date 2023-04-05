@@ -1,13 +1,11 @@
-## bsky.syui.cf
+## bskyw.syui.ai
 
-user : https://bsky.syui.cf/syui
+user : https://bskyw.syui.ai/syui
 
-avatar : https://bsky.syui.cf/syui#github
+avatar : https://bskyw.syui.ai/syui#github
 
 
 ```sh
-$ vim public/json/syui.bsky.social
-
 $ nvm use 14
 $ yarn install
 $ yarn serve

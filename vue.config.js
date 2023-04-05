@@ -3,7 +3,7 @@ module.exports = {
 		config
 			.plugin('html')
 			.tap(args => {
-				args[0].title = "bsky.syui.cf";
+				args[0].title = "bskyw.syui.ai";
 				return args;
 			})
 	},
