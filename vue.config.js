@@ -1,12 +1,4 @@
 module.exports = {
-	chainWebpack: config => {
-		config
-			.plugin('html')
-			.tap(args => {
-				args[0].title = "bskyw.syui.ai";
-				return args;
-			})
-	},
 	publicPath: "./",
 	configureWebpack: {
 		output: {

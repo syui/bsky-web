@@ -123,7 +123,7 @@ if (loc.includes('.') === false) {
 }
 var hash = window.location.hash.split('/').slice(-1)[0];
 if (loc.length == 0||loc === ".bsky.social"){
-	var default_id = "syui.bsky.social";
+	var default_id = "syui.ai";
 } else {
 	var default_id = loc;
 }
@@ -132,6 +132,11 @@ if (hash === "#github"){
 	var avatar = "https://github.com/" + window.location.pathname.split('/').slice(-1)[0] + ".png";
 }
 export default {
+	name: "App",
+	metaInfo: {
+		title: "bskyw.syui.ai",
+		titleTemplate: '%s',
+	},
 	data () {
 		return {
 			syui_icon: "/syui.png",
